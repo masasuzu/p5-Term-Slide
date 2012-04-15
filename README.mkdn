@@ -1,0 +1,22 @@
+# NAME
+
+Term::Slide -
+
+# SYNOPSIS
+
+    use Term::Slide;
+
+# DESCRIPTION
+
+Term::Slide is
+
+# AUTHOR
+
+masasuzu / SUZUKI Masashi <m15.suzuki.masashi@gmail.com>
+
+# SEE ALSO
+
+# LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
