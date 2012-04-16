@@ -4,50 +4,45 @@ use warnings;
 use 5.14.2;
 our $VERSION = '0.01';
 
-use Term::Screen;
+use Term::ScreenColor;
 
 my $slides = [
     +{
-        content => [
-            +{ content => 'ほげ', },
-            +{ content => 'ほげ', },
-            +{ content => "\e[33mほげ\e[0m", wait => 1 },
-            +{ content => 'ほげ', },
+        title => "ほげほげータイトル",
+        contents => [
+            +{ content => '* ほげ', },
+            +{ content => "* \e[31mほげ\e[0m", },
+            +{ content => "* \e[33mほげ\e[0m", wait => 1 },
+            +{ content => '* ほげ', },
         ],
     },
     +{
-        content => [
-            +{ content => 'ほげ', },
-            +{ content => 'ほほげ', },
+        contents => [
+            +{ content => '* タイトルなし', },
+            +{ content => "* \e[31mほげ\e[0m", },
+            +{ content => '* ほげ', },
+            +{ content => '  * ほほげ', wait => 1 },
+            +{ content => '  * ほほげ', },
         ],
     },
     +{
-        content => [
-            +{ content => 'ほげ', },
-            +{ content => 'ほほほげ', },
-            +{ content => 'ほげ', },
-            +{ content => 'ほげ', },
+        title => "ほげほげータイトル",
+        contents => [
+            +{ content => "* \e[31mほげ\e[0m", },
+            +{ content => '* ほげ', },
+            +{ content => '  * ほほほげ', },
+            +{ content => '  * ほげ', },
+            +{ content => '* ほげ', },
         ],
     },
 ];
 
-sub new {
-    my ($class, $parser_class, $file) = @_;
-
-    my $parser = $parser_class->new($file);
-    return bless +{
-        __parser => $parser,
-    }, $class;
-
-}
-
 sub show {
     my ($self) = @_;
-    my $screen    = Term::Screen->new;
+    my $screen    = Term::ScreenColor->new;
 
-    my $rows    =  $screen->rows;
+    my $rows    = $screen->rows;
     my $columns = $screen->cols;
-    #my $slides = $self->paser->data;
 
     $screen->clrscr;
 
@@ -55,12 +50,28 @@ sub show {
     my $page_index = 0;
     while (0 <= $page_index && $page_index < $page_num) {
 
-        my $line_index = 0;
-        for my $line (@{ $slides->[$page_index]->{content} }) {
-            $screen->at($line_index)->puts($line->{content});
-            sleep 1 if $line->{wait};
-            $line_index++;
+        my $title_line = "===================================";
+        my $page = $slides->[$page_index];
+        if ( $page->{title}) {
+            $screen->at(0)->bold->cyan->puts($title_line)->normal;
+            $screen->at(1)->bold->cyan->puts($page->{title})->normal;
+            $screen->at(2)->bold->cyan->puts($title_line)->nomal;
         }
+
+        my $line_index = 4;
+        for my $line (@{ $page->{contents} }) {
+            $screen->at($line_index)->puts($line->{content});
+            $line_index++;
+
+            if ($line->{wait}) {
+                while ( my $c = $screen->at($rows, $columns)->getch ) {
+                    if ( $c eq 'n' ) {
+                        last;
+                    }
+                }
+            }
+        }
+
         while ( my $c = $screen->at($rows, $columns)->getch ) {
             if ( $c eq 'n' ) {
                 $page_index++;
