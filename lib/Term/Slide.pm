@@ -30,6 +30,7 @@ sub show {
 
     my $page_num = scalar @{ $slides };
     my $page_index = 0;
+    PAGE:
     while (0 <= $page_index && $page_index < $page_num) {
 
         my $page = $slides->[$page_index];
@@ -40,6 +41,7 @@ sub show {
         }
 
         my $line_index = 4;
+        LINE:
         for my $line (@{ $page->{contents} }) {
             $screen->at($line_index)->puts($line->{content});
             $line_index++;
@@ -48,6 +50,11 @@ sub show {
                 while ( my $c = $screen->at($rows, $columns)->getch ) {
                     if ( $c eq 'n' ) {
                         last;
+                    }
+                    elsif ( $c eq 'p' ) {
+                        $page_index--;
+                        $screen->clrscr;
+                        next PAGE;
                     }
                 }
             }
