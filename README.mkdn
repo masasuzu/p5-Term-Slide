@@ -4,11 +4,13 @@ Term::Slide -
 
 # SYNOPSIS
 
-    use Term::Slide;
+    perl -MTerm::Slide -Ilib -E 'Term::Slide->new("Term::Slide::Parser::Perl", "./example/sample.pl")->show'
+    # first argument: parser class
+    # sedond argument: slide source file
 
 # DESCRIPTION
 
-Term::Slide is
+Term::Slide is poor slide tool for terminal.
 
 # AUTHOR
 
