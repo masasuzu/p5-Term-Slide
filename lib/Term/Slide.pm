@@ -1,61 +1,42 @@
 package Term::Slide;
 use strict;
 use warnings;
-use 5.14.2;
+use utf8;
 our $VERSION = '0.01';
 
+use Class::Load;
 use Term::ScreenColor;
 
-my $slides = [
-    +{
-        title => "ほげほげータイトル",
-        contents => [
-            +{ content => '* ほげ', },
-            +{ content => "* \e[31mほげ\e[0m", },
-            +{ content => "* \e[33mほげ\e[0m", wait => 1 },
-            +{ content => '* ほげ', },
-        ],
-    },
-    +{
-        contents => [
-            +{ content => '* タイトルなし', },
-            +{ content => "* \e[31mほげ\e[0m", },
-            +{ content => '* ほげ', },
-            +{ content => '  * ほほげ', wait => 1 },
-            +{ content => '  * ほほげ', },
-        ],
-    },
-    +{
-        title => "ほげほげータイトル",
-        contents => [
-            +{ content => "* \e[31mほげ\e[0m", },
-            +{ content => '* ほげ', },
-            +{ content => '  * ほほほげ', },
-            +{ content => '  * ほげ', },
-            +{ content => '* ほげ', },
-        ],
-    },
-];
+my $TITLE_LINE = "===================================";
+
+sub new {
+    my ($class, $parser_class, $file) = @_;
+    Class::Load::load_class($parser_class);
+    my $parser = $parser_class->new($file);
+
+    return bless +{ slides => $parser->data }, $class;
+}
 
 sub show {
     my ($self) = @_;
     my $screen    = Term::ScreenColor->new;
 
+    $screen->clrscr;
+
     my $rows    = $screen->rows;
     my $columns = $screen->cols;
+    my $slides  = $self->{slides};
 
-    $screen->clrscr;
 
     my $page_num = scalar @{ $slides };
     my $page_index = 0;
     while (0 <= $page_index && $page_index < $page_num) {
 
-        my $title_line = "===================================";
         my $page = $slides->[$page_index];
         if ( $page->{title}) {
-            $screen->at(0)->bold->cyan->puts($title_line)->normal;
+            $screen->at(0)->bold->cyan->puts($TITLE_LINE)->normal;
             $screen->at(1)->bold->cyan->puts($page->{title})->normal;
-            $screen->at(2)->bold->cyan->puts($title_line)->nomal;
+            $screen->at(2)->bold->cyan->puts($TITLE_LINE)->nomal;
         }
 
         my $line_index = 4;
@@ -85,7 +66,6 @@ sub show {
 
         $screen->clrscr;
     }
-
 }
 
 1;
@@ -101,7 +81,7 @@ Term::Slide -
 
 =head1 DESCRIPTION
 
-Term::Slide is
+Term::Slide is poor slide tool for terminal.
 
 =head1 AUTHOR
 
