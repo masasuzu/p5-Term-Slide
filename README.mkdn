@@ -10,7 +10,7 @@ Term::Slide -
 
 # DESCRIPTION
 
-Term::Slide is poor slide tool for terminal. :heart:
+Term::Slide is poor slide tool for terminal.
 
 # AUTHOR
 
